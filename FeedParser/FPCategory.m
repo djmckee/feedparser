@@ -28,7 +28,7 @@
 @implementation FPCategory
 @synthesize domain=_domain, value=_value;
 + (instancetype)categoryWithDomain:(NSString *)domain value:(NSString *)value {
-    return [[[self alloc] initWithDomain:domain value:value] autorelease];
+    return [[self alloc] initWithDomain:domain value:value];
 }
 
 - (id)initWithDomain:(NSString *)domain value:(NSString *)value {
@@ -54,11 +54,6 @@
     }
 }
 
-- (void)dealloc {
-    [_domain release];
-    [_value release];
-    [super dealloc];
-}
 
 #pragma mark -
 #pragma mark Coding Support

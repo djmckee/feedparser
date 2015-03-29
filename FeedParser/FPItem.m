@@ -86,10 +86,10 @@
 - (void)rss_link:(NSString *)textValue attributes:(NSDictionary *)attributes parser:(NSXMLParser *)parser {
 	FPLink *aLink = [[FPLink alloc] initWithHref:textValue rel:@"alternate" type:nil title:nil];
 	if (link == nil) {
-		link = [aLink retain];
+		link = aLink;
 	}
 	[links addObject:aLink];
-	[aLink release];
+
 }
 
 - (void)atom_link:(NSDictionary *)attributes parser:(NSXMLParser *)parser {
@@ -98,10 +98,10 @@
 	FPLink *aLink = [[FPLink alloc] initWithHref:href rel:[attributes objectForKey:@"rel"] type:[attributes objectForKey:@"type"]
 										   title:[attributes objectForKey:@"title"]];
 	if (link == nil && [aLink.rel isEqualToString:@"alternate"]) {
-		link = [aLink retain];
+		link = aLink;
 	}
 	[links addObject:aLink];
-	[aLink release];
+
 }
 
 - (void)rss_enclosure:(NSDictionary *)attributes parser:(NSXMLParser *)parser {
@@ -112,7 +112,7 @@
 	NSUInteger length = [lengthStr integerValue];
 	FPEnclosure *anEnclosure = [[FPEnclosure alloc] initWithURL:url length:length type:type];
 	[enclosures addObject:anEnclosure];
-	[anEnclosure release];
+
 }
 
 
@@ -120,7 +120,7 @@
     NSString *domain = [attributes objectForKey:@"domain"];
     FPCategory *aCategory = [[FPCategory alloc] initWithDomain:domain value:textValue];
     [categories addObject:aCategory];
-    [aCategory release];
+
 }
 
 - (NSString *)content {
@@ -143,20 +143,6 @@
             (categories  == other->categories  || [categories  isEqualToArray:other->categories]));
 }
 
-- (void)dealloc {
-	[title release];
-	[link release];
-	[links release];
-	[guid release];
-	[description release];
-	[content release];
-	[pubDate release];
-	[creator release];
-	[author release];
-	[enclosures release];
-    [categories release];
-	[super dealloc];
-}
 
 #pragma mark -
 #pragma mark Coding Support
@@ -164,7 +150,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder {
 	if (self = [super initWithCoder:aDecoder]) {
 		title = [[aDecoder decodeObjectForKey:@"title"] copy];
-		link = [[aDecoder decodeObjectForKey:@"link"] retain];
+		link = [[aDecoder decodeObjectForKey:@"link"] copy];
 		links = [[aDecoder decodeObjectForKey:@"links"] mutableCopy];
 		guid = [[aDecoder decodeObjectForKey:@"guid"] copy];
 		description = [[aDecoder decodeObjectForKey:@"description"] copy];

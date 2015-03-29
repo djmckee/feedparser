@@ -74,8 +74,7 @@
 - (void)closeTextNode {
 	FPExtensionTextNode *child = [[FPExtensionTextNode alloc] initWithStringValue:currentText];
 	[children addObject:child];
-	[child release];
-	[currentText release];
+
 	currentText = nil;
 }
 
@@ -89,15 +88,6 @@
 			(children      == other->children      || [children      isEqualToArray:other->children]));
 }
 
-- (void)dealloc {
-	[name release];
-	[qualifiedName release];
-	[namespaceURI release];
-	[attributes release];
-	[children release];
-	[currentText release];
-	[super dealloc];
-}
 
 #pragma mark XML parser methods
 
@@ -110,7 +100,7 @@
 																		  qualifiedName:qName attributes:attributeDict];
 	[child acceptParsing:parser];
 	[children addObject:child];
-	[child release];
+
 }
 
 - (void)parser:(NSXMLParser *)parser didEndElement:(NSString *)elementName namespaceURI:(NSString *)namespaceURI qualifiedName:(NSString *)qName {
@@ -135,12 +125,12 @@
 - (void)parser:(NSXMLParser *)parser foundCDATA:(NSData *)CDATABlock {
 	NSString *data = [[NSString alloc] initWithData:CDATABlock encoding:NSUTF8StringEncoding];
 	if (data == nil) {
-		[self abortParsing:parser withString:[NSString stringWithFormat:@"Non-UTF8 data found in CDATA block at line %d", [parser lineNumber]]];
+		[self abortParsing:parser withString:[NSString stringWithFormat:@"Non-UTF8 data found in CDATA block at line %ld", (long)[parser lineNumber]]];
 	} else {
 		if (currentText == nil) currentText = [[NSMutableString alloc] init];
 		[currentText appendString:data];
-		[data release];
-	}
+
+    }
 }
 
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError {
@@ -157,8 +147,8 @@
 - (void)abortParsing:(NSXMLParser *)parser withString:(NSString *)description {
 	id<FPXMLParserProtocol> parent = parentParser;
 	parentParser = nil;
-	[currentText release];
-	currentText = nil;
+
+    currentText = nil;
 	[parent abortParsing:parser withString:description];
 }
 

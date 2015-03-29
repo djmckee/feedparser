@@ -78,16 +78,16 @@
 	FPItem *item = [[FPItem alloc] initWithBaseNamespaceURI:baseNamespaceURI];
 	[item acceptParsing:parser];
 	[items addObject:item];
-	[item release];
+
 }
 
 - (void)rss_link:(NSString *)textValue attributes:(NSDictionary *)attributes parser:(NSXMLParser *)parser {
 	FPLink *aLink = [[FPLink alloc] initWithHref:textValue rel:@"alternate" type:nil title:nil];
 	if (link == nil) {
-		link = [aLink retain];
+		link = aLink;
 	}
 	[links addObject:aLink];
-	[aLink release];
+
 }
 
 - (void)atom_link:(NSDictionary *)attributes parser:(NSXMLParser *)parser {
@@ -96,10 +96,10 @@
 	FPLink *aLink = [[FPLink alloc] initWithHref:href rel:[attributes objectForKey:@"rel"] type:[attributes objectForKey:@"type"]
 										   title:[attributes objectForKey:@"title"]];
 	if (link == nil && [aLink.rel isEqualToString:@"alternate"]) {
-		link = [aLink retain];
+		link = aLink;
 	}
 	[links addObject:aLink];
-	[aLink release];
+
 }
 
 - (BOOL)isEqual:(id)anObject {
@@ -113,15 +113,6 @@
 			(items           == other->items           || [items           isEqualToArray:other->items]));
 }
 
-- (void)dealloc {
-	[title release];
-	[link release];
-	[links release];
-	[feedDescription release];
-	[pubDate release];
-	[items release];
-	[super dealloc];
-}
 
 #pragma mark -
 #pragma mark Coding Support
@@ -129,7 +120,7 @@
 - (id)initWithCoder:(NSCoder *)aDecoder {
 	if (self = [super initWithCoder:aDecoder]) {
 		title = [[aDecoder decodeObjectForKey:@"title"] copy];
-		link = [[aDecoder decodeObjectForKey:@"link"] retain];
+		link = [[aDecoder decodeObjectForKey:@"link"] copy];
 		links = [[aDecoder decodeObjectForKey:@"links"] mutableCopy];
 		feedDescription = [[aDecoder decodeObjectForKey:@"feedDescription"] copy];
 		pubDate = [[aDecoder decodeObjectForKey:@"pubDate"] copy];
